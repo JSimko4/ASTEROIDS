@@ -10,5 +10,5 @@
   var asteroidS = new Image();  // Sivy asteroid
   asteroidS.src = './GRAFIKA/ASTEROIDY/A-SIVY.png';
 
-  var instrukcie = new Image();
-  instrukcie.src = './GRAFIKA/INSTRUKCIE.jpg';
+  var instrukciePozadie = new Image();
+  instrukciePozadie.src = './GRAFIKA/INSTRUKCIE.jpg';
