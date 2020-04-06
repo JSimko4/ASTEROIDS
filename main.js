@@ -1,19 +1,31 @@
-var app; // for easier debug
+var game; // for easier debug
 
 // Just start our application and add some widgets to it
 window.onload = function() {
-  app = new App("canvas");
+  game = new Game("canvas");
 
+  createMainMenu();  // vytvorim hlavne menu
+  
+  // zapnem appku -> ukazem hlavne menu
+  game.start();
+}
+
+function createMainMenu(){
   // MAIN MENU
   var mainMenu = new Widget(0, 0, canvas.width, canvas.height);
   // BUTTON PLAY GAME
-  var playGameButton = new Button(canvas.width/2, canvas.height/3, 250, 80, "#2B26BF", "PLAY GAME", 35); // play game button
+  var playGameButton = new Button(canvas.width/2, canvas.height/3, 250, 80, "#2B26BF", "PLAY GAME", 32); // play game button
   playGameButton.action = function() {
+    // vytvorim objekty
+
+
+
     // spustim hru
+
 
     // APP odteraz vykresluje pozadie hry
     mainMenu.visible = false;
-    app.ondraw = function(context){
+    game.ondraw = function(context){
         context.drawImage(pozadie, 0, 0, canvas.width, canvas.height);
     }
   }
@@ -24,49 +36,55 @@ window.onload = function() {
   instrukcieButton.action = function() {
     mainMenu.visible = false;
     instrukcie.visible = true;
-    // APP na instrukciach vypisuje instrukcie
-    app.ondraw = function(context){
+    // Hra na instrukciach vypisuje instrukcie
+    game.ondraw = function(context){
         context.drawImage(instrukciePozadie, 0, 0, canvas.width, canvas.height);
     }
   }
   mainMenu.add(instrukcieButton);
 
   // BUTTON LEADERBOARD
-  var leaderBoardButton = new Button(canvas.width/2, canvas.height/1.5, 280, 80, "#2B26BF", "LEADERBOARDS", 10); // leaderboards button
+  var leaderBoardButton = new Button(canvas.width/2, canvas.height/1.5, 280, 80, "#2B26BF", "LEADERBOARDS", 10); // leaderboard button
   leaderBoardButton.action = function() {
     mainMenu.visible = false;
     leaderboard.visible = true;
     // vypise LEADERBOARDS
-        app.ondraw = function(context){
+      game.ondraw = function(context){
+          // spravit LEADERBOARD
+            // TODO....
          context.drawImage(pozadie, 0, 0, canvas.width, canvas.height);
     }
   }
   mainMenu.add(leaderBoardButton);
-  app.add(mainMenu); // pridam do app cele main menu s buttonami
+  game.add(mainMenu); // pridam do app cele main menu s buttonami
 
   
   // INSTRUKCIE MENU
   var instrukcie = new Widget(0, 0, canvas.width, canvas.height, false);
-  // Krizik vlavo hore
-  var krizik = new Button(30, 30, 30, 30, "red", "X", 5);
+  // BACK vlavo hore
+  var backButton = new Button(60, 43, 60, 45, "red", "X", 5);
+
+  backButton.ondraw = function(context){
+    if (this.hover)
+      context.drawImage(backWhite, 30, 25, 60, 45);
+    else
+      context.drawImage(back, 30, 25, 60, 45);
+  }
   // Kliknutie vrati s5 do hlavneho menu
-  krizik.action = function(){
+  backButton.action = function(){
     mainMenu.visible = true;
     instrukcie.visible = false;
     leaderboard.visible = false;
     // APP na instrukciach vykresluje opat cierny stvoruholnik
-    app.ondraw = function(context){
+    game.ondraw = function(context){
         context.fillRect(0, 0, canvas.width, canvas.height);
     }
   }
-  instrukcie.add(krizik);
-  app.add(instrukcie); // pridam do app podmenu instrukcie
+  instrukcie.add(backButton);
+  game.add(instrukcie); // pridam do app podmenu instrukcie
 
   // LEADERBOARD MENU
   var leaderboard = new Widget(0, 0, canvas.width, canvas.height, false);
-  leaderboard.add(krizik); 
-  app.add(leaderboard); // pridam do app podmenu leaderboard
-
-  // Start the application main loop
-  app.start();
+  leaderboard.add(backButton); 
+  game.add(leaderboard); // pridam do app podmenu leaderboard
 }

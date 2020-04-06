@@ -1,5 +1,5 @@
 // Simple application abstraction
-class App extends Widget {
+class Game extends Widget {
     constructor(element) {
       var canvas = window.document.getElementById(element)
       var context = canvas.getContext("2d")
@@ -22,7 +22,7 @@ class App extends Widget {
   
     // Initialize application handlers
     start() {
-      var app = this;
+      var game = this;
   
       // Register mouse handler
       window.onclick = function (event) {
@@ -31,7 +31,7 @@ class App extends Widget {
           y: event.layerY,
         }
         // Send click message
-        app.click(point)
+        game.click(point)
       }
   
       // Register keyb handler
@@ -39,12 +39,22 @@ class App extends Widget {
         this.console.log(event.key);
 
         // Send key message
-        app.key(event)
+        game.key(event)
+      }
+
+      // register onmousemove
+      window.onmousemove = function(event){
+        var pointMove = {
+          x: event.layerX,
+          y: event.layerY,
+        }
+
+        game.mouseMove(pointMove);
       }
   
       // Update 30time per second
       setInterval(function () {
-        app.update()
+        game.update()
       }, 1000 / 30)
     }
   }

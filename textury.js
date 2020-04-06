@@ -12,3 +12,9 @@
 
   var instrukciePozadie = new Image();
   instrukciePozadie.src = './GRAFIKA/INSTRUKCIE.jpg';
+
+  var back = new Image();
+  back.src = './GRAFIKA/back.png';
+  
+  var backWhite = new Image();
+  backWhite.src = './GRAFIKA/back-white.png';
