@@ -65,7 +65,6 @@ class Widget extends Node {
 
   // Keyboard handling
   key(key) {
-
     // Send key message to other Widgets
     this.notify("key", key)
   }

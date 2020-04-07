@@ -2,6 +2,9 @@
   var pozadie = new Image();
   pozadie.src = './GRAFIKA/POZADIE.jpg';  // Pozadie
 
+  var pozadieMainMenu = new Image();
+  pozadieMainMenu.src = './GRAFIKA/POZADIE-MAINMENU.jpg';  // Pozadie
+
   var lodN = new Image();       // Lod v neutralnej polohe
   var lodP = new Image();       // Lod v pohybe
   lodN.src = './GRAFIKA/LOD/LOD.png';
@@ -18,3 +21,11 @@
   
   var backWhite = new Image();
   backWhite.src = './GRAFIKA/back-white.png';
+
+  var vymazat = new Image();
+  vymazat.src = './GRAFIKA/vymazat.jpg';
+
+
+// KONSTANTY
+const rozmeryLode = 86;
+const rozmeryVelkyAsteroid = 120;

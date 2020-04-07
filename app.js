@@ -3,8 +3,8 @@ class Game extends Widget {
     constructor(element) {
       var canvas = window.document.getElementById(element)
       var context = canvas.getContext("2d")
-      canvas.width = window.innerWidth * 0.90;        // sirka canvas
-      canvas.height = window.innerHeight * 0.95;      // vyska canvas
+      canvas.width = 1400;        // sirka canvas
+      canvas.height = 690;      // vyska canvas
       super(0, 0, canvas.width, canvas.height)
       this.canvas = canvas
       this.context = context
@@ -12,12 +12,12 @@ class Game extends Widget {
   
     // Redefine draw
     ondraw(context) {
-        context.fillRect(0, 0, canvas.width, canvas.height);
+        context.drawImage(pozadieMainMenu, 0, 0, canvas.width, canvas.height);
     }
   
     // Redraw everything
     update() {
-      this.draw(this.context)
+      this.draw(this.context);
     }
   
     // Initialize application handlers
@@ -36,8 +36,11 @@ class Game extends Widget {
   
       // Register keyb handler
       window.onkeydown = function (event) {
-        this.console.log(event.key);
+        // Send key message
+        game.key(event)
+      }
 
+      window.onkeyup = function (event) {
         // Send key message
         game.key(event)
       }
@@ -52,9 +55,9 @@ class Game extends Widget {
         game.mouseMove(pointMove);
       }
   
-      // Update 30time per second
+      // HLAVNY CYKLUS
       setInterval(function () {
         game.update()
-      }, 1000 / 30)
+      }, 1000 / 80)
     }
   }
