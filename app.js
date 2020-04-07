@@ -8,6 +8,7 @@ class Game extends Widget {
       super(0, 0, canvas.width, canvas.height)
       this.canvas = canvas
       this.context = context
+      this.gameLoop;
     }
   
     // Redefine draw
@@ -56,7 +57,7 @@ class Game extends Widget {
       }
   
       // HLAVNY CYKLUS
-      setInterval(function () {
+      game.gameLoop = setInterval(function () {
         game.update()
       }, 1000 / 80)
     }

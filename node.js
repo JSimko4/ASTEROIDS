@@ -17,9 +17,11 @@ class Node {
   // Notify nodes of event
   notify(event, argument) {
     for (var index in this.nodes) {
-      var node = this.nodes[index]
-      if (typeof (node[event]) == "function")
-        node[event](argument)
+      var node = this.nodes[index];
+      if(node != undefined){ // osetrenie
+        if (typeof (node[event]) == "function")
+          node[event](argument)
+      }
     }
   }
 }

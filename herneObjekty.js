@@ -34,14 +34,15 @@ class HernyObjekt extends Widget{
 
     kolizia(context){
       this.onkoliziaOkraje(); // vykonam koliziu 
-      
+      this.onkoliziaObjekty(); // kolizia objektov s hracom
+
       this.notify("kolizia", context); // zavolam ostatne herne objekty aby ju vykonali tiez
     }
 
     onkoliziaOkraje(){
-      if(this.x > canvas.width - this.sirka/2)
+      if(this.x > canvas.width - this.sirka/2){
         this.x = 0;
-      
+      }
       else if(this.x < 0)
         this.x = canvas.width - this.sirka/2;
       
@@ -52,9 +53,7 @@ class HernyObjekt extends Widget{
         this.y = canvas.height - this.vyska/2;
     }
 
-    onkoliziaObjekty(){
-
-    }
+    onkoliziaObjekty(){}
   }
 
 class Lod extends HernyObjekt{
@@ -124,6 +123,20 @@ class Lod extends HernyObjekt{
       this.y += this.velY;
       this.x += this.velX;
   }
+
+  onkoliziaObjekty(){
+    for(var i = 0; i < 4; i++){
+      var asteroid = game.nodes[i];
+      if(asteroid.asteroid != undefined){
+        //console.log("TEST");
+        if( (this.x >= asteroid.x) && (this.x <= asteroid.x + asteroid.sirka)  &&
+            (this.y >= asteroid.y) && (this.y <= asteroid.y + asteroid.vyska) ){
+          gameOver();
+          break;
+        }
+      }
+    }
+  }
 }
 
 class Asteroid extends HernyObjekt{
@@ -131,11 +144,12 @@ class Asteroid extends HernyObjekt{
     super(x, y, rozmery, textura);
     this.rychlostX = rychlostX;
     this.rychlostY = rychlostY;
+    this.asteroid = true;
   }
 
   onpohyb(){
-    this.x += this.rychlostX;
-    this.y += this.rychlostY;
+    this.x += 0//this.rychlostX;
+    this.y += 0//this.rychlostY;
   }
 }
 

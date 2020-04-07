@@ -37,6 +37,34 @@ function vytvorAsteroidy(asteroidy, level, obtiaznost){
   }
 }
 
+function gameOver(){
+  var gameOverScreen = new Widget(0,0,canvas.width,canvas.height);
+  var playGameButton = new Button(canvas.width/2, canvas.height/2.5 + 20, 250, 80, "#2B26BF", "PLAY AGAIN", 32); // play game button
+
+  // pozadie game over screen
+  game.ondraw = function(context){
+    context.fillRect(0,0,canvas.width,canvas.height);
+
+    context.fillStyle = "red";
+    context.font = "Bold 40px Charcoal";
+    context.fillText("GAME OVER", (canvas.width/2)-125, 210);
+    //context.drawImage(pozadieMainMenu, 0, 0, canvas.width, canvas.height);
+  }
+
+  playGameButton.action = function() {
+    // vytvorim objekty a hra moze zacat.
+    startGame();
+    game.ondraw = function(context){
+        context.drawImage(pozadie, 0, 0, canvas.width, canvas.height);
+        // VYPISE NAZOV HRY
+        context.font = "Bold 35px Charcoal";
+        context.fillText("Asteroids", (canvas.width/2)-85, 40);
+    }
+  }
+  gameOverScreen.add(playGameButton);
+  game.nodes = gameOverScreen.nodes;
+}
+
 function createMainMenu(){
   // MAIN MENU
   var mainMenu = new Widget(0, 0, canvas.width, canvas.height);
