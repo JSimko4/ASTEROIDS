@@ -8,7 +8,16 @@ class Game extends Widget {
       super(0, 0, canvas.width, canvas.height)
       this.canvas = canvas
       this.context = context
-      this.gameLoop;
+      this.gameLoop; // gameloop interval
+      this.skore = 0;
+      this.mute = 0;
+      this.pocetZivotov = 3;
+    }
+
+    // INDEXY: 1 - EXPLOZIA, 2 - SMRT, 3 - STRATA ZIVOTA, 4,5,6 - STRELBA
+    herneZvuky(index){
+      if(!this.mute) // ak nie je mutnute audio
+        gameAudio[index].play();
     }
   
     // Redefine draw
@@ -18,7 +27,7 @@ class Game extends Widget {
   
     // Redraw everything
     update() {
-      this.draw(this.context);
+      this.animaciaHry(this.context);
     }
   
     // Initialize application handlers

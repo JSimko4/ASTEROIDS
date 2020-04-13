@@ -1,4 +1,7 @@
-// Vsetky herne objekty maju spolocne ze musia obsahovat x, y, rozmery a texturu.
+/*
+Vsetky herne objekty maju spolocne ze musia obsahovat x, y, rozmery a texturu.
+Rozhodol som sa ze hernyobjekt bude dedit metody od Widgetu pretoze potrebujem aby som animoval hru a taktiez mal informacie o stlacenych klavesach
+*/
 class HernyObjekt extends Widget{
     constructor(x, y, rozmery, textura){
       super(x, y);
@@ -17,10 +20,14 @@ class HernyObjekt extends Widget{
       this.notify("key", key)
     }
 
-    // Widget specific drawing
-    ondraw(context) {
+    hernaLogika(context){
       this.kolizia(context); // vykonam koliziu
       this.pohyb(context); // vykonam pohyb objektov
+    }
+
+    // Widget specific drawing
+    ondraw(context) {
+      this.hernaLogika(context); // vykonam pohyb/koliziu a vsetko co sa tyka hernej logiky
       context.drawImage(this.obrazok, this.x, this.y, this.sirka, this.vyska); // vykreslim
     }
 
@@ -34,7 +41,7 @@ class HernyObjekt extends Widget{
 
     kolizia(context){
       this.onkoliziaOkraje(); // vykonam koliziu 
-      this.onkoliziaObjekty(); // kolizia objektov s hracom
+      this.onkoliziaObjekty(context); // kolizia objektov s hracom
 
       this.notify("kolizia", context); // zavolam ostatne herne objekty aby ju vykonali tiez
     }
@@ -53,103 +60,5 @@ class HernyObjekt extends Widget{
         this.y = canvas.height - this.vyska/2;
     }
 
-    onkoliziaObjekty(){}
+    onkoliziaObjekty(context){}
   }
-
-class Lod extends HernyObjekt{
-  constructor(x, y, rozmery, textura){
-    super(x, y, rozmery, textura);
-    // radius
-    this.r = rozmery/2;
-    this.a = 0; // 90 stupnov na radiany -> 90 * Math.PI/180;
-    // POHYB a RYCHLOST
-    this.rychlost = 0.8;
-    this.maxRychlost = 4.5;
-
-    this.friction = 0.985;
-    this.velY = 0;
-    this.velX = 0;
-    this.klavesy = [];
-  }
-
-  // ovladanie lode
-  onkey(key) {
-    if(key.type === "keyup")
-      this.klavesy[key.keyCode] = false;
-    else
-      this.klavesy[key.keyCode] = true;
-  }
-
-  // vykreslovanie
-  ondraw(context) {
-    this.onpohyb();
-    this.kolizia(context);
-
-    context.translate(this.x, this.y); // zaciatocny bod je v strede lodi
-    context.rotate(this.a); // otocim lod podla nastaveneho uhla
-    context.drawImage(this.obrazok, -(this.r), -(this.r), this.sirka, this.vyska); // nakreslim lod
-  }
-
-  onpohyb(context){
-    // akceleracia
-    if (this.klavesy[38]) {
-      if (this.velY > -this.maxRychlost && this.velX > -this.maxRychlost &&
-        this.velY < this.maxRychlost && this.velX < this.maxRychlost ){
-        this.velY -= this.rychlost * Math.cos(this.a);
-        this.velX += this.rychlost * Math.sin(this.a);
-        this.obrazok = lodP;
-      }
-     }
-
-     /*spomalenie -> FIX
-      if (this.klavesy[40]) {
-        //if (this.velY < 0.1 && this.velX > 0.1){
-          this.velY += this.rychlost * Math.cos(this.a);
-          this.velX -= this.rychlost * Math.sin(this.a);
-          this.obrazok = lodN;
-        //}
-      }*/
-
-      // otacanie lode
-      if (this.klavesy[37]) {
-          this.a -= 3.8 * Math.PI/180; // otocim lod o 5 stupnov
-      }
-      if (this.klavesy[39]) {
-          this.a += 3.8 * Math.PI/180; // otocim lod o 5 stupnov
-    }
-      this.velY *= this.friction;
-      this.velX *= this.friction;
-
-      this.y += this.velY;
-      this.x += this.velX;
-  }
-
-  onkoliziaObjekty(){
-    for(var i = 0; i < 4; i++){
-      var asteroid = game.nodes[i];
-      if(asteroid.asteroid != undefined){
-        //console.log("TEST");
-        if( (this.x >= asteroid.x) && (this.x <= asteroid.x + asteroid.sirka)  &&
-            (this.y >= asteroid.y) && (this.y <= asteroid.y + asteroid.vyska) ){
-          gameOver();
-          break;
-        }
-      }
-    }
-  }
-}
-
-class Asteroid extends HernyObjekt{
-  constructor(x, y, rychlostX, rychlostY, rozmery, textura){
-    super(x, y, rozmery, textura);
-    this.rychlostX = rychlostX;
-    this.rychlostY = rychlostY;
-    this.asteroid = true;
-  }
-
-  onpohyb(){
-    this.x += 0//this.rychlostX;
-    this.y += 0//this.rychlostY;
-  }
-}
-

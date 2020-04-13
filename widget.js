@@ -1,4 +1,3 @@
-// Simple Widget implementation
 class Widget extends Node {
   constructor(x, y, sirka, vyska, visible) {
     // Construct Node
@@ -10,18 +9,16 @@ class Widget extends Node {
     this.visible = visible != undefined ? visible : true; //ak chcem aby bol visible nebudem posielat nic -> undefined
   }
 
-  // Drawing widgets using canvas
-  draw(context) {
+  // Tu sa vykonava hlavna slučka hry -> animacia hry
+  animaciaHry(context) {
     if (!this.visible) return
-
     // Each widget contained in its parent
     context.save()
-
     // Draw
     this.ondraw(context)
 
     // Send draw event to other Widgets
-    this.notify("draw", context)
+    this.notify("animaciaHry", context)
 
     context.restore()
   }
@@ -81,6 +78,7 @@ class Button extends Widget{
     this.text = text;
     this.dlzkaSlov = dlzkaSlov;
     this.hover = false;
+    this.odKliknute = false;
   }
 
   ondraw(context) {

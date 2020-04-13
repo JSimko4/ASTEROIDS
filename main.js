@@ -1,43 +1,114 @@
 var game; // for easier debug
 
-// Just start our application and add some widgets to it
+// Pri nacitani okna sa mi vytvori objekt hra
 window.onload = function() {
   game = new Game("canvas");
 
   createMainMenu();  // vytvorim hlavne menu
 
-  // zapnem appku -> zobrazi sa hlavne menu
+  // zapnem hru cez metodu objektu game -> zobrazi sa hlavne menu
   game.start();
 }
 
-  // funkcia na vytvorenie objektov hry
+// FUNKCIA na vytvorenie objektov hry
 function startGame(){
   var hrac, asteroidy = [];
-  // vymazem hlavne menu a ostatne podmenu z GAME
-  game.nodes = [];
+  var musicButton, audioButton;
+  
+  game.nodes = []; // vymazem hlavne menu
+  game.skore = 0; // vynulujem skore
+  game.pocetZivotov = 3; // nastavim pocet zivotov na 4
+  gameAudio[0].play(); // zapnem hudbu pri zapnuti hry
+
+  // zacnem vykreslovat pozadie hry a skore v hornej casti obrazovky
+  game.ondraw = function(context){
+    context.drawImage(pozadie, 0, 0, canvas.width, canvas.height);
+    // VYPISE NAZOV HRY
+    context.font = "Bold 30px Charcoal";
+    context.fillText("SKORE: " + game.skore, canvas.width/2.375, 40);
+    //VYPISE DOLE VPRAVO ZIVOTY
+    context.font = "Bold 37px Helvetica";
+    context.fillStyle = "white"; // biely text
+    context.fillText(game.pocetZivotov, canvas.width-87, canvas.height-19);
+    context.drawImage(zivoty, canvas.width-60, canvas.height-55, 40, 40);
+  }
+
+  // MUSIC BUTTON
+  musicButton = new Button(32, 35, 45, 45);
+  // vykreslovanie ikonky
+  musicButton.ondraw = function(context){
+    if (this.odKliknute)
+      context.drawImage(musicOFF, 15, 15, 55, 50);
+    else
+      context.drawImage(musicON, 15, 15, 55, 50);
+  }
+
+  // vypina/zapina hudbu
+  musicButton.action = function() {
+    if(this.odKliknute){
+      gameAudio[0].play();
+      this.odKliknute = false;
+    }
+    else{
+      this.odKliknute = true;
+      gameAudio[0].pause();
+      gameAudio[0].currentTime = 0;
+    }
+  }
+
+  // AUDIO BUTTON
+  audioButton = new Button(95, 35, 50, 45);
+  // vykreslovanie ikonky
+  audioButton.ondraw = function(context){
+    if (this.odKliknute)
+      context.drawImage(audioOFF, 80, 20, 40, 40);
+    else
+      context.drawImage(audioON, 80, 20, 40, 40);
+  }
+
+  // vypina/zapina audio zvuky
+  audioButton.action = function() {
+    if(this.odKliknute){
+      game.mute = false;
+      this.odKliknute = false;
+    }
+    else{
+      game.mute = true;
+      this.odKliknute = true;
+    }
+  }
 
   // VYTVORIM ASTEROIDY
-  vytvorAsteroidy(asteroidy, 1, 1);
+  vytvorAsteroidy(asteroidy, 1, 1); // level 1 obtiaznost 1
   // VYTVORIM HRACA
   hrac = new Lod(canvas.width/2 - rozmeryLode/2, canvas.height/2+rozmeryLode, rozmeryLode, lodN);
-  game.add(hrac);
+  game.add(hrac); // pridam hraca
+  game.add(musicButton); // pridam music button
+  game.add(audioButton); // pridam audio button
 }
 
- // VYTVORI ASTEROIDY PRE DANE LEVELY
+ // FUNKCIA VYTVORI ASTEROIDY PRE DANY LEVEL
 function vytvorAsteroidy(asteroidy, level, obtiaznost){
-  var x, y, rychlostX, rychlostY;
-  for(var i = 0; i < 3*obtiaznost*level; i++){
+  var x, y, rychlostX, rychlostY, nahodnaFarba;
+  for(var i = 0; i < 4*obtiaznost*level; i++){
+    nahodnaFarba = (Math.random()*5) << 0; // vygenerujem nahodne cislo od 0 do 4 aby som vybral farbu asteroidu
+
+    // TO DO.. -> spravit fix aby sa asteroidy nespawnovali nad start. poziciou hraca
+    // TO DO.. -> spravit aby asteroidy na zaklade farby mali ine vlastnosti / vyssia rychlost
     x = Math.random()*canvas.width;
     y = Math.random()*canvas.height;
-    rychlostX = Math.random()*2;
-    rychlostY = Math.random()*2;
+    rychlostX = Math.random()*2.25;
+    rychlostY = Math.random()*2.25;
 
-    asteroidy[i] = new Asteroid(x, y, rychlostX,rychlostY, rozmeryVelkyAsteroid/(i+1), asteroidS);
+    asteroidy[i] = new Asteroid(x, y, rychlostX,rychlostY, rozmeryVelkyAsteroid, texturyAsteroidov[nahodnaFarba], false);
     game.add(asteroidy[i]);
   }
 }
 
+
+// FUNKCIA VYTVORI GAME OVER OBRAZOVKU
 function gameOver(){
+  game.herneZvuky(2); // prehram zvuk smrti
   var gameOverScreen = new Widget(0,0,canvas.width,canvas.height);
   var playGameButton = new Button(canvas.width/2, canvas.height/2.5 + 20, 250, 80, "#2B26BF", "PLAY AGAIN", 32); // play game button
 
@@ -54,32 +125,21 @@ function gameOver(){
   playGameButton.action = function() {
     // vytvorim objekty a hra moze zacat.
     startGame();
-    game.ondraw = function(context){
-        context.drawImage(pozadie, 0, 0, canvas.width, canvas.height);
-        // VYPISE NAZOV HRY
-        context.font = "Bold 35px Charcoal";
-        context.fillText("Asteroids", (canvas.width/2)-85, 40);
-    }
   }
+  gameAudio[0].pause(); // vypnem hudbu pretoze hrac zomrel
+  gameAudio[0].currentTime = 0;
   gameOverScreen.add(playGameButton);
   game.nodes = gameOverScreen.nodes;
 }
 
+// FUNKCIA VYTVORI MAIN MENU OBRAZOVKU
 function createMainMenu(){
-  // MAIN MENU
   var mainMenu = new Widget(0, 0, canvas.width, canvas.height);
   // BUTTON PLAY GAME
   var playGameButton = new Button(canvas.width/2, canvas.height/2.5 + 20, 250, 80, "#2B26BF", "PLAY GAME", 32); // play game button
   playGameButton.action = function() {
     // vytvorim objekty a hra moze zacat.
     startGame();
-
-    game.ondraw = function(context){
-        context.drawImage(pozadie, 0, 0, canvas.width, canvas.height);
-        // VYPISE NAZOV HRY
-        context.font = "Bold 35px Charcoal";
-        context.fillText("Asteroids", (canvas.width/2)-85, 40);
-    }
   }
   mainMenu.add(playGameButton);
 
@@ -108,7 +168,7 @@ function createMainMenu(){
     }
   }
   mainMenu.add(leaderBoardButton);
-  game.add(mainMenu); // pridam do app cele main menu s buttonami
+  game.add(mainMenu); // pridam do game cele main menu s buttonami
 
   
   // INSTRUKCIE MENU
@@ -127,16 +187,16 @@ function createMainMenu(){
     mainMenu.visible = true;
     instrukcie.visible = false;
     leaderboard.visible = false;
-    // APP na instrukciach vykresluje opat cierny stvoruholnik s nadpisom asteroids
+    // Hra na instrukciach vykresluje opat cierny stvoruholnik s nadpisom asteroids
     game.ondraw = function(context){
         context.drawImage(pozadieMainMenu, 0, 0, canvas.width, canvas.height);
     }
   }
   instrukcie.add(backButton);
-  game.add(instrukcie); // pridam do app podmenu instrukcie
+  game.add(instrukcie); // pridam do game podmenu instrukcie
 
   // LEADERBOARD MENU
   var leaderboard = new Widget(0, 0, canvas.width, canvas.height, false);
   leaderboard.add(backButton); 
-  game.add(leaderboard); // pridam do app podmenu leaderboard
+  game.add(leaderboard); // pridam do game podmenu leaderboard
 }
