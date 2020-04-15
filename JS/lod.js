@@ -1,7 +1,3 @@
-function vzdialenostBodov(x1, y1, x2, y2){
-  return Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1,2));
-}
-
 class Lod extends HernyObjekt{
     constructor(x, y, rozmery, textura){
       super(x, y, rozmery, textura);
@@ -10,11 +6,11 @@ class Lod extends HernyObjekt{
 
       // POHYB a RYCHLOST
       this.klavesy = [];
-      this.rychlost = 0.8; // zrychlenie
+      this.rychlost = 0.65; // zrychlenie
       this.maxRychlost = 6;
   
       // Smooth spomalovanie a akceleracia na X/Y
-      this.friction = 0.93;
+      this.friction = 0.96;
       this.velY = 0;
       this.velX = 0;
   
@@ -22,18 +18,21 @@ class Lod extends HernyObjekt{
       this.respawnProtection = 0;
     }
   
-    // ovladanie lode
+    // ovladanie lode a strelba
     onkey(key) {
+      if(key.type === "keydown" && key.keyCode === 32)
+        this.strelba(); // zavolam metodu strelania
+
       if(key.type === "keyup")
         this.klavesy[key.keyCode] = false;
       else
         this.klavesy[key.keyCode] = true;
     }
   
-    // vykreslovanie
+    // vykreslovanie a herna logika
     ondraw(context) {
-      this.onpohyb();
-      this.kolizia(context);
+      this.pohyb(); // vykonam pohyb
+      this.kolizia(context); // vykonam koliziu objektov
 
       context.translate(this.x, this.y); // zaciatocny bod je v strede lodi
       context.rotate(this.a); // otocim lod podla nastaveneho uhla
@@ -42,7 +41,7 @@ class Lod extends HernyObjekt{
   
     onpohyb(context){
       // akceleracia
-      if (this.klavesy[38]) {
+      if (this.klavesy[38] || this.klavesy[87]) {
         if (this.velY > -this.maxRychlost && this.velX > -this.maxRychlost &&
           this.velY < this.maxRychlost && this.velX < this.maxRychlost ){
           this.velY -= this.rychlost * Math.cos(this.a);
@@ -60,18 +59,12 @@ class Lod extends HernyObjekt{
         else
           this.obrazok = lodN; // textura lode ma vyzor lode v neutralnej pozicii
        }
-  
-       //spomalenie -> UPRAVIT
-        if (this.klavesy[40]) {
-            this.velY = 0;
-            this.velX = 0;
-        }
-  
+
         // otacanie lode
-        if (this.klavesy[37]) {
+        if (this.klavesy[37] || this.klavesy[65]) {
             this.a -= 3.5 * Math.PI/180; // otocim lod o 3.5 stupna do lava
         }
-        if (this.klavesy[39]) {
+        if (this.klavesy[39] || this.klavesy[68]) {
             this.a += 3.5 * Math.PI/180; // otocim lod o 3.5 stupna do prava
       }
         this.velY *= this.friction;
@@ -91,7 +84,7 @@ class Lod extends HernyObjekt{
       var asteroid;
       for(var i = 0; i < game.nodes.length; i++){
         asteroid = game.nodes[i];
-        if(asteroid instanceof Asteroid){ // testujem ci sa jedna fakt o asteroid (v game nodes mam aj hraca a buttony)
+        if(asteroid instanceof Asteroid){ // testujem ci sa jedna fakt o asteroid (v game nodes mam aj hraca, buttony a projektily)
           if(vzdialenostBodov(this.x, this.y, asteroid.x+asteroid.sirka/2, asteroid.y+asteroid.sirka/2) < this.sirka/2.75 + asteroid.sirka/2.15){
             if(game.pocetZivotov == 0){
               gameOver();
@@ -107,16 +100,31 @@ class Lod extends HernyObjekt{
       }
     }
   
-      respawn(context){
-        // restartujem poziciu hraca na X a Y a jeho aktualnu rychlost
-        this.x = canvas.width/2 - rozmeryLode/2;
-        this.y = canvas.height/2 + rozmeryLode;
-        this.velX = 0;
-        this.velY = 0;
-        this.a = 0;
-  
-        game.pocetZivotov--; // znizim poceet zivotov
-        this.respawnProtection = 160; // ochrana hraca pred koliziu na priblizne 2 sekundy
-        game.herneZvuky(3); // strata zivota
+    respawn(context){
+      game.herneZvuky(3); // strata zivota
+      // restartujem poziciu hraca na X a Y a jeho aktualnu rychlost
+      this.x = canvas.width/2 - rozmeryLode/2;
+      this.y = canvas.height/2 + rozmeryLode;
+      this.velX = 0;
+      this.velY = 0;
+      this.a = 0;
+
+      game.pocetZivotov--; // znizim poceet zivotov
+      this.respawnProtection = 160; // ochrana hraca pred koliziu na priblizne 2 sekundy
+    }
+
+    strelba(){
+      var strelaX, strelaY, strelaVX, strelaVY;
+      if(game.pocetProjektilov < 6){ // maximalny pocet projektilov je 6
+        // Vlastnosti novo vytvoreneho projektilu
+        strelaX = this.x + 4/3 * this.r * Math.sin(this.a);
+        strelaY = this.y - 4/3 * this.r * Math.cos(this.a);
+        strelaVX = PROJEKTIL_RYCHLOST * Math.sin(this.a);
+        strelaVY = PROJEKTIL_RYCHLOST * Math.cos(this.a);
+
+        // vytvorim projektil a vlozim ho do hry
+        game.add(new Projektil(strelaX,strelaY,strelaVX,strelaVY,10));
+        game.pocetProjektilov++;
       }
+    }
   }

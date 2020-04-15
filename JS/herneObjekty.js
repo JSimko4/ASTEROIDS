@@ -20,14 +20,10 @@ class HernyObjekt extends Widget{
       this.notify("key", key)
     }
 
-    hernaLogika(context){
-      this.kolizia(context); // vykonam koliziu
-      this.pohyb(context); // vykonam pohyb objektov
-    }
-
     // Widget specific drawing
     ondraw(context) {
-      this.hernaLogika(context); // vykonam pohyb/koliziu a vsetko co sa tyka hernej logiky
+      this.kolizia(context); // vykonam koliziu
+      this.pohyb(context); // vykonam pohyb objektov
       context.drawImage(this.obrazok, this.x, this.y, this.sirka, this.vyska); // vykreslim
     }
 

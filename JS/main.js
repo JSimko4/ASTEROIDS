@@ -77,6 +77,7 @@ function startGame(){
       this.odKliknute = true;
     }
   }
+  game.mute = false; // pri play again zapnem automaticky s5 audio
 
   // VYTVORIM ASTEROIDY
   vytvorAsteroidy(asteroidy, 1, 1); // level 1 obtiaznost 1

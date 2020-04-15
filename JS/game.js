@@ -8,12 +8,15 @@ class Game extends Widget {
       super(0, 0, canvas.width, canvas.height)
       this.canvas = canvas
       this.context = context
-      this.gameLoop; // gameloop interval
-      this.skore = 0;
-      this.mute = 0;
-      this.pocetZivotov = 3;
+
+      this.gameLoop;               // gameloop interval
+      this.skore = 0;             // skore hráča
+      this.mute = false;          // vypnutie / zapnutie audia 
+      this.pocetZivotov = 3;     // pocet zivoto hraca
+      this.pocetProjektilov = 0; // pocet projektilov vystrelenych z lode
     }
 
+    // funkcia na prehravanie game audia
     // INDEXY: 1 - EXPLOZIA, 2 - SMRT, 3 - STRATA ZIVOTA, 4,5,6 - STRELBA
     herneZvuky(index){
       if(!this.mute) // ak nie je mutnute audio

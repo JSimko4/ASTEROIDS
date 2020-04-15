@@ -55,3 +55,4 @@
   const rozmeryLode = 86;
   const rozmeryVelkyAsteroid = 120;
   const rozmeryMensiAsteroid = 60;
+  const PROJEKTIL_RYCHLOST = 10.5;

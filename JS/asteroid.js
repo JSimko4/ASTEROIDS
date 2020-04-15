@@ -6,12 +6,6 @@ class Asteroid extends HernyObjekt{
       this.bolUzZniceny = bolUzZniceny;
     }
   
-    // Widget specific drawing
-    ondraw(context) {
-      this.hernaLogika(context); // vykonam pohyb/koliziu a vsetko co sa tyka hernej logiky
-      context.drawImage(this.obrazok, this.x, this.y, this.sirka, this.vyska); // vykreslim
-    }
-  
     onpohyb(){
       this.x += this.rychlostX;
       this.y += this.rychlostY;
