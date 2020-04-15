@@ -1,20 +1,24 @@
+function vzdialenostBodov(x1, y1, x2, y2){
+  return Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1,2));
+}
+
 class Lod extends HernyObjekt{
     constructor(x, y, rozmery, textura){
       super(x, y, rozmery, textura);
-      // radius
       this.r = rozmery/2;
       this.a = 0; // 90 stupnov na radiany -> 90 * Math.PI/180;
+
       // POHYB a RYCHLOST
       this.klavesy = [];
-      this.rychlost = 0.8;
-      this.maxRychlost = 4.5;
+      this.rychlost = 0.8; // zrychlenie
+      this.maxRychlost = 6;
   
       // Smooth spomalovanie a akceleracia na X/Y
-      this.friction = 0.985;
+      this.friction = 0.93;
       this.velY = 0;
       this.velX = 0;
   
-      // OCHRANA PO UMRTI
+      // OCHRANA PO SMRTI
       this.respawnProtection = 0;
     }
   
@@ -30,7 +34,7 @@ class Lod extends HernyObjekt{
     ondraw(context) {
       this.onpohyb();
       this.kolizia(context);
-  
+
       context.translate(this.x, this.y); // zaciatocny bod je v strede lodi
       context.rotate(this.a); // otocim lod podla nastaveneho uhla
       context.drawImage(this.obrazok, -(this.r), -(this.r), this.sirka, this.vyska); // nakreslim lod
@@ -88,8 +92,7 @@ class Lod extends HernyObjekt{
       for(var i = 0; i < game.nodes.length; i++){
         asteroid = game.nodes[i];
         if(asteroid instanceof Asteroid){ // testujem ci sa jedna fakt o asteroid (v game nodes mam aj hraca a buttony)
-          if( (this.x + this.sirka/2.9 >= asteroid.x) && (this.x - this.sirka/2.9 <= asteroid.x + asteroid.sirka/1.35)  &&
-              (this.y + this.vyska/2.75 >= asteroid.y) && (this.y - this.vyska/2.75 <= asteroid.y + asteroid.vyska/1.45) ){
+          if(vzdialenostBodov(this.x, this.y, asteroid.x+asteroid.sirka/2, asteroid.y+asteroid.sirka/2) < this.sirka/2.75 + asteroid.sirka/2.15){
             if(game.pocetZivotov == 0){
               gameOver();
               break;
