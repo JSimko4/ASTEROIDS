@@ -20,6 +20,8 @@ class Game extends Widget {
       
       this.level = 1;             // aktualny level
       this.zvolenaObtiaznost = 2; // 1 - lahka, 2 stredna, 3 tazka
+
+      this.leaderBoardSkore = []; // ulozene usporiadane leaderboard skore
     }
 
     // funkcia na prehravanie game audia
