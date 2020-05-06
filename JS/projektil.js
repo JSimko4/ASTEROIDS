@@ -15,7 +15,7 @@ class Projektil extends HernyObjekt{
 
     onpohyb(context){
         // po urcitej vzdialenosti vymazem projektil z hry
-        if(this.urazenaVzdialenost > 0.3 * canvas.width){
+        if(this.urazenaVzdialenost > 0.325 * canvas.width){
             game.remove(this);
             game.pocetProjektilov--;
         }
@@ -39,16 +39,16 @@ class Projektil extends HernyObjekt{
     onkoliziaObjekty(context){   
         var asteroid;
         for(var i = 0; i < game.nodes.length; i++){
-          asteroid = game.nodes[i];
-          if(asteroid instanceof Asteroid){ // testujem ci sa jedna fakt o asteroid (v game nodes mam aj hraca, buttony a dalsie projektily)
+            asteroid = game.nodes[i];
+            if(asteroid instanceof Asteroid){ // testujem ci sa jedna fakt o asteroid (v game nodes mam aj hraca, buttony a dalsie projektily)
             if(vzdialenostBodov(this.x, this.y, asteroid.x+asteroid.sirka/2, asteroid.y+asteroid.sirka/2) < this.sirka/2.75 + asteroid.sirka/2.15){
                 asteroid.znicenieADuplikacia(asteroid); // znicim asteroid, ktory sa rozdvoji na dalsie mini asteroidy
                 game.remove(this);                      // znicim projektil
                 game.pocetProjektilov--;                // znizim pocet projektilov na hernej ploche
                 break;
+                }
             }
-          }
         }
-      }
+    }
 }
 

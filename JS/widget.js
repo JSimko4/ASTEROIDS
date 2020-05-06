@@ -75,6 +75,7 @@ class Button extends Widget{
     this.x = x - sirka/2;
     this.y = y - vyska/2;
     this.farba = farba;
+    this.prvotnaFarba = farba;
     this.text = text;
     this.dlzkaSlov = dlzkaSlov;
     this.hover = false;
@@ -88,6 +89,10 @@ class Button extends Widget{
     context.font = "Bold 30px Arial";
     context.fillText(this.text, this.x + this.dlzkaSlov, this.y + this.vyska/2 + 10); // play game
 
+    this.specialnyHOVER(context); // specialny hover (LOD vedla textu)
+  }
+
+  specialnyHOVER(context){
     if (this.hover){
       context.drawImage(lodP, this.x - 80, this.y + 5, 70, 70);
     }
@@ -102,6 +107,6 @@ class Button extends Widget{
     if(this.hover)
       this.farba = "white";
     else
-      this.farba = "#2B26BF";
+      this.farba = this.prvotnaFarba;
   }
 }

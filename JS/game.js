@@ -12,15 +12,21 @@ class Game extends Widget {
       this.gameLoop;               // gameloop interval
       this.skore = 0;             // skore hráča
       this.mute = false;          // vypnutie / zapnutie audia 
-      this.pocetZivotov = 3;     // pocet zivoto hraca
+      this.pocetZivotov = 3;     // pocet zivotov hraca
       this.pocetProjektilov = 0; // pocet projektilov vystrelenych z lode
+      this.pocetAsteroidov = 0;
+
+      this.pause = false;      // kontrolovanie pauzy v hre
+      
+      this.level = 1;             // aktualny level
+      this.zvolenaObtiaznost = 2; // 1 - lahka, 2 stredna, 3 tazka
     }
 
     // funkcia na prehravanie game audia
     // INDEXY: 1 - EXPLOZIA, 2 - SMRT, 3 - STRATA ZIVOTA, 4,5,6 - STRELBA
     herneZvuky(index){
-      if(!this.mute) // ak nie je mutnute audio
-        gameAudio[index].play();
+      if(!this.mute) // pozeram sa ci nie je audio mutnute
+        gameAudio[index].cloneNode(true).play(); // fix na to aby som mohol mat aj viac vybuchov asteroidov naraz
     }
   
     // Redefine draw
@@ -30,7 +36,9 @@ class Game extends Widget {
   
     // Redraw everything
     update() {
-      this.animaciaHry(this.context);
+      if(!this.pause){ // ak hra nie je zapauzovana tak hra vykresluje vsetky objekty, vykonava pohyb atd..
+        this.animaciaHry(this.context);
+      }
     }
   
     // Initialize application handlers

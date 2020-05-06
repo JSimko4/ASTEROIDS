@@ -22,6 +22,15 @@
   musicON.src = './GRAFIKA/IKONKY/MUSIC_ON.png';
   var musicOFF = new Image();
   musicOFF.src = './GRAFIKA/IKONKY/MUSIC_OFF.png';
+
+  var pause = new Image();
+  pause.src = './GRAFIKA/IKONKY/PAUSE.png';
+  var UNpause = new Image();
+  UNpause.src = './GRAFIKA/IKONKY/UNPAUSE.png';
+
+  var zapauzovanaHra = new Image();
+  zapauzovanaHra.src = './GRAFIKA/zapauzovana_hra.png';
+
   var zivoty = new Image();
   zivoty.src = './GRAFIKA/IKONKY/ZIVOTY.png';
 
@@ -48,8 +57,8 @@
   texturyAsteroidov[4].src = './GRAFIKA/ASTEROIDY/A-ZLATY.png';
 
   // EXPLOZIA
-  var explozia = new Image();
-  explozia.src = './GRAFIKA/VYBUCH.png';
+  var explozia_asteroidu = new Image();
+  explozia_asteroidu.src = './GRAFIKA/VYBUCH.png';
 
   // KONSTANTY
   const rozmeryLode = 86;

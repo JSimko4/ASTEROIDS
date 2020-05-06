@@ -12,7 +12,6 @@ class HernyObjekt extends Widget{
       this.obrazok = textura;
     }
 
-    // Keyboard handling
     key(key) {
       this.onkey(key);
 
@@ -20,7 +19,6 @@ class HernyObjekt extends Widget{
       this.notify("key", key)
     }
 
-    // Widget specific drawing
     ondraw(context) {
       this.kolizia(context); // vykonam koliziu
       this.pohyb(context); // vykonam pohyb objektov

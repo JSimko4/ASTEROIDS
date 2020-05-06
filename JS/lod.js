@@ -114,7 +114,7 @@ class Lod extends HernyObjekt{
     }
 
     strelba(){
-      var strelaX, strelaY, strelaVX, strelaVY;
+      var strelaX, strelaY, strelaVX, strelaVY, indexZvuku;
       if(game.pocetProjektilov < 6){ // maximalny pocet projektilov je 6
         // Vlastnosti novo vytvoreneho projektilu
         strelaX = this.x + 4/3 * this.r * Math.sin(this.a);
@@ -125,6 +125,10 @@ class Lod extends HernyObjekt{
         // vytvorim projektil a vlozim ho do hry
         game.add(new Projektil(strelaX,strelaY,strelaVX,strelaVY,10));
         game.pocetProjektilov++;
+
+        // INDEXY 4,5,6 - STRELBA
+        indexZvuku = Math.floor(Math.random() * 3) + 4 << 0;// nahodne cislo od 4 do 6
+        game.herneZvuky(indexZvuku);
       }
     }
   }
