@@ -31,12 +31,14 @@ class Lod extends HernyObjekt{
   
     // vykreslovanie a herna logika
     ondraw(context) {
-      this.pohyb(); // vykonam pohyb
-      this.kolizia(context); // vykonam koliziu objektov
+      context.save();
+      context.translate(this.x, this.y);                                              // zaciatocny bod je v strede lodi
+      context.rotate(this.a);                                                         // otocim lod podla nastaveneho uhla
+      context.drawImage(this.obrazok, -(this.r), -(this.r), this.sirka, this.vyska);  // nakreslim lod
+      context.restore();
 
-      context.translate(this.x, this.y); // zaciatocny bod je v strede lodi
-      context.rotate(this.a); // otocim lod podla nastaveneho uhla
-      context.drawImage(this.obrazok, -(this.r), -(this.r), this.sirka, this.vyska); // nakreslim lod
+      this.pohyb();          // vykonam pohyb
+      this.kolizia(context); // vykonam koliziu objektov
     }
   
     onpohyb(context){

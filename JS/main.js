@@ -73,13 +73,14 @@ function startGame(){
   var hrac;
   var musicButton, audioButton;
   
-  game.nodes = []; // vymazem buttony z menu vyberu obtiaznosti
-  game.skore = 0; // vynulujem skore
-  game.pocetZivotov = 0; // nastavim pocet zivotov na 4
-  game.level = 1;       // nastavim level na 1
-  game.pocetAsteroidov = 0; // vynulujem pocet Asteroidov
-  game.pocetProjektilov = 0; // vynulujem pocet Projektilov
-  gameAudio[0].play(); // zapnem hudbu pri zapnuti hry
+  game.nodes = [];            // vymazem buttony z menu vyberu obtiaznosti
+  gameAudio[0].play();        // zapnem hudbu pri zapnuti hry
+  game.skore = 0;             // vynulujem skore
+  game.celkovaDlzkaHry = 0;   // vynulujem predchadzajucu dlzku hry
+  game.pocetAsteroidov = 0;   // vynulujem pocet Asteroidov
+  game.pocetProjektilov = 0;  // vynulujem pocet Projektilov
+  game.pocetZivotov = 3;      // nastavim pocet zivotov na 4
+  game.level = 1;             // nastavim level na 1
 
   // zacnem vykreslovat pozadie hry a skore v hornej casti obrazovky
   game.ondraw = function(context){
@@ -99,10 +100,12 @@ function startGame(){
   musicButton = new Button(32, 35, 45, 45);
   // vykreslovanie ikonky
   musicButton.ondraw = function(context){
-    if (this.odKliknute)
-      context.drawImage(musicOFF, 15, 15, 55, 50);
-    else
-      context.drawImage(musicON, 15, 15, 55, 50);
+    if(!game.dalsiLevel){ // buttony nevykreslujem ked nastava zmena levelu
+      if (this.odKliknute)
+        context.drawImage(musicOFF, 15, 15, 55, 50);
+      else
+        context.drawImage(musicON, 15, 15, 55, 50);
+    }
   }
 
   // vypina/zapina hudbu
@@ -122,10 +125,12 @@ function startGame(){
   audioButton = new Button(95, 35, 50, 45);
   // vykreslovanie ikonky
   audioButton.ondraw = function(context){
-    if (this.odKliknute)
-      context.drawImage(audioOFF, 80, 20, 40, 40);
-    else
-      context.drawImage(audioON, 80, 20, 40, 40);
+    if(!game.dalsiLevel){ // buttony nevykreslujem ked nastava zmena levelu
+      if (this.odKliknute)
+        context.drawImage(audioOFF, 80, 20, 40, 40);
+      else
+        context.drawImage(audioON, 80, 20, 40, 40);
+    }
   }
 
   // vypina/zapina audio zvuky
@@ -145,10 +150,12 @@ function startGame(){
   pauseButton = new Button(1335,35,60,55);
   // vykreslovanie ikonky
   pauseButton.ondraw = function(context){
-    if (this.odKliknute)
-      context.drawImage(UNpause, 1320,20,50,50);
-    else
-      context.drawImage(pause,1320,20,50,50);
+    if(!game.dalsiLevel){ // buttony nevykreslujem ked nastava zmena levelu
+      if (this.odKliknute)
+        context.drawImage(UNpause, 1320,20,50,50);
+      else
+        context.drawImage(pause,1320,20,50,50);
+    }
   }
 
   // zapauzovanie
@@ -160,7 +167,7 @@ function startGame(){
     else{
       this.odKliknute = true;
       // predtym nez zapauzujem hru musim este vvykreslit zmenu ikonky pauzy a taktiez zavolam funkciu na vykreslenie pause menu
-      game.animaciaHry(game.context);
+      game.update();
       vykresliPauzu(game.context);
       // zapauzujem hru
       game.pause = true;
@@ -179,9 +186,10 @@ function startGame(){
 
  // FUNKCIA VYTVORI ASTEROIDY PRE DANY LEVEL
 function vytvorAsteroidy(level, obtiaznost){
+  game.dalsiLevelCas = new Date(); // ulozim si kedy zacal tento level
   var asteroidy = [];
-  var x, y, rychlostX, rychlostY, nahodnaFarba, skoreZaZnicenie, zelenyAsteroid, HP, pocetAsteroidovNaVytvorenie = 2+level;
-  for(var i = 0; i < pocetAsteroidovNaVytvorenie*obtiaznost; i++){
+  var x, y, rychlostX, rychlostY, nahodnaFarba, skoreZaZnicenie, zelenyAsteroid, HP;
+  for(var i = 0; i < level+(obtiaznost*2); i++){
     zelenyAsteroid = false;
     HP = 0;
     nahodnaFarba = Math.floor(Math.random() * 5); // vygenerujem nahodne cislo od 0 do 4 aby som vybral farbu asteroidu
@@ -191,6 +199,7 @@ function vytvorAsteroidy(level, obtiaznost){
     rychlostY = Math.random()*2.25;
     skoreZaZnicenie = 200;
 
+    // SPECIALNE VLASTNOSTI ASTEROIDOV
     // 1 - Cerveny, 2 - Modry, 3 - Zeleny, 4 - Zlaty
     switch(nahodnaFarba){
       case 1:
@@ -211,7 +220,7 @@ function vytvorAsteroidy(level, obtiaznost){
         break;
     }
 
-    // Osetrenie predtym aby sa asteroidy spawnovali nad zaciatocnou poziciou hraca
+    // Osetrenie predtym aby sa asteroidy nespawnovali nad zaciatocnou poziciou hraca
     if(x - rozmeryVelkyAsteroid*2 <= canvas.width/2 + rozmeryLode && x + rozmeryVelkyAsteroid*2 >= canvas.width/2 - rozmeryLode &&
        y - rozmeryVelkyAsteroid*2 <= canvas.height/2 - rozmeryLode && y +rozmeryVelkyAsteroid*2 >= canvas.height/2 + rozmeryLode){
       i--;
@@ -224,10 +233,8 @@ function vytvorAsteroidy(level, obtiaznost){
   }
 }
 
-function nextLevel(level, obtiaznost){
-  vytvorAsteroidy(level, obtiaznost);
-
-  var aktualny_node;
+function nextLevelScreen(level){
+  var aktualny_node, predchadzajuciCas = game.dalsiLevelCas, zaKolkoSekundPrejdeny = 0;
   for(var i = 0; i < game.nodes.length; i++){
     aktualny_node = game.nodes[i];
 
@@ -242,13 +249,61 @@ function nextLevel(level, obtiaznost){
     }
 
     // Ak su na obrazovke nejake explozie tak ich vymazem
-    else if(aktualny_node instanceof Explozia){
+    else if(aktualny_node instanceof Explozia)
       game.remove(aktualny_node);
-      aktualny_node = undefined;
+
+    else if(aktualny_node instanceof Projektil){
+      game.remove(aktualny_node);
+      game.pocetProjektilov--;
     }
   }
+  game.dalsiLevelCas = new Date();
+  game.dalsiLevel = true;
+  zaKolkoSekundPrejdeny = (game.dalsiLevelCas-predchadzajuciCas)/1000;
+  game.celkovaDlzkaHry += zaKolkoSekundPrejdeny;
+
+  game.context.save();
+  game.context.fillStyle =  "black";
+  game.context.fillRect(0,0,canvas.width, canvas.height);
+  game.context.fillStyle = "white";
+  game.context.font = "Bold 30px Charcoal";
+  game.context.fillText("Level " + (level-1) + " bol dokonceny za " + zaKolkoSekundPrejdeny.toFixed(2) + "s!", (canvas.width/2)-235, 210);
+  game.context.font = "Bold 50px Charcoal";
+  game.context.fillStyle = "green";
+  game.context.fillText("NASLEDUJE LEVEL " + level, (canvas.width/2)-280, 310);
+  game.context.font = "Bold 22px Charcoal";
+  game.context.fillStyle = "white";
+  game.context.fillText("Doba prezita vo vesmire: " + game.celkovaDlzkaHry.toFixed(2) + "s", 13, 30);
+  game.context.restore();
 }
 
+// FUNKCIA VYKRESLUJE PAUZU KED HRAC STLACI IKONKU PRE PAUZU
+function vykresliPauzu(context){
+  var vyska = 200*0.7;
+  var sirka = 605*0.75;
+  let napovedy = [
+  'Červené asteroidy sú nebezpečné kvôli ich vysokej rýchlosti',
+  '        Modré asteroidy sú z veľmi odolného materiálu',
+  'Zlaté asteroidy pridávajú po zničení dvojnásobné skóre',
+  'Zelený asteroid sa po zničení rozbije na 4 menšie asteroidy',
+  '        Sivé asteroidy nemajú žiadne špeciálne vlastnosti',];
+  let nahodnaNapoveda = Math.floor(Math.random() * 5); // nahodna napoveda od 0 do 4
+
+  context.save();
+  context.fillStyle = 'rgba(7, 2, 2, 0.3)'; // zatmavenie okolia
+  context.fillRect(0,0,canvas.width, canvas.height,); // zatmavenie okolia
+  context.drawImage(zapauzovanaHra, 444, 245, sirka, vyska); // presypacie hodiny v strede
+  context.drawImage(UNpause, 1320,20,50,50); // prekreslim ikonku pauzy aby bola lepsie viditelna
+  context.fillStyle = "black";
+  context.font = "Bold 30px Charcoal";
+  context.fillText("SKORE: " + game.skore, canvas.width/2.375, 40); // prekreslim skore aby ho bolo jasne vidiet aj pocas pauzy
+  context.fillStyle = "white";
+  context.font = "13.7px Charcoal";
+  context.fillText(napovedy[nahodnaNapoveda], 560, 320);
+  context.restore();
+}
+
+// Funkcia ulozi vysoke skore hraca potom co zomrie
 function ulozitHighScore(najnizsieSkore){
   var textField = new Textfield("Zadaj svoje meno", (canvas.width/2)-135, canvas.height/2.4, 300, 50);
 
@@ -284,6 +339,7 @@ function ulozitHighScore(najnizsieSkore){
   game.add(textField);
 }
 
+// Game over obrazovka ktora je zavolana bud po ulozeni vysokeho skore alebo ak hrac nedosiahol nove vysoke skore
 function gameOverObrazovka(){
   var gameOverScreen = new Widget(0,0,canvas.width,canvas.height);
   var playGameButton = new Button(canvas.width/2, canvas.height/2.5 + 20, 250, 80, "#2B26BF", "PLAY AGAIN", 32); // play game button
@@ -296,6 +352,8 @@ function gameOverObrazovka(){
     context.fillStyle = "red";
     context.font = "Bold 40px Charcoal";
     context.fillText("GAME OVER", (canvas.width/2)-125, 210);
+    game.context.font = "Bold 30px Charcoal";
+    game.context.fillText("Doba prezita vo vesmire: " + game.celkovaDlzkaHry.toFixed(2) + "s", 15, canvas.height-25);
   }
 
   playGameButton.action = function() {
@@ -322,8 +380,14 @@ function gameOver(){
   gameAudio[0].currentTime = 0;
   game.nodes = [];
 
+  // ulozim si informaciu pre hraca kolko casu stravil pri hre (v sec)
+  var predchadzajuciCas = game.dalsiLevelCas, sekundyDoSmrti;
+  game.dalsiLevelCas = new Date();
+  sekundyDoSmrti = (game.dalsiLevelCas-predchadzajuciCas)/1000;
+  game.celkovaDlzkaHry += sekundyDoSmrti;
+
   var noveHighScore = false, ulozeneSkore, keyName;
-  // ulozim si najnizsie skore ktore nahradim
+  // na ulozenie najnizsieho skore ktore nahradim
   var najnizsieSkore = {
     skore: 0,
     keyName: ""
@@ -348,7 +412,7 @@ function gameOver(){
     gameOverObrazovka();
 }
 
-// Bubblesort pre leaderboard
+// Bubblesort pre leaderboard hodnoty
 function bubbleSort(arr){
   for (var i = arr.length-1; i >= 0; i--){
     for(var j = 1; j <= i; j++){
@@ -362,6 +426,7 @@ function bubbleSort(arr){
   return arr;
 }
 
+// Nacita leaderboard hodnoty do arrayu game.leaderBoardSkore
 function nacitaj_Leaderboard(){
   game.leaderBoardSkore = []; // vyprazdnim array na leaderboard skore
   // nacitam vsetky skore z localstorage
@@ -488,29 +553,4 @@ function createMainMenu(){
   var leaderboard = new Widget(0, 0, canvas.width, canvas.height, false);
   leaderboard.add(backButton); 
   game.add(leaderboard); // pridam do game podmenu leaderboard
-}
-
-function vykresliPauzu(context){
-    var vyska = 200*0.7;
-    var sirka = 605*0.75;
-    let napovedy = [
-    'Červené asteroidy sú nebezpečné kvôli ich vysokej rýchlosti',
-    '        Modré asteroidy sú z veľmi odolného materiálu',
-    'Zlaté asteroidy pridávajú po zničení dvojnásobné skóre',
-    'Zelený asteroid sa po zničení rozbije na 4 menšie asteroidy',
-    '        Sivé asteroidy nemajú žiadne špeciálne vlastnosti',];
-    let nahodnaNapoveda = Math.floor(Math.random() * 5); // nahodna napoveda od 0 do 4
-
-    context.save();
-    context.fillStyle = 'rgba(7, 2, 2, 0.3)'; // zatmavenie okolia
-    context.fillRect(0,0,canvas.width, canvas.height,); // zatmavenie okolia
-    context.drawImage(zapauzovanaHra, 444, 245, sirka, vyska); // presypacie hodiny v strede
-    context.drawImage(UNpause, 1320,20,50,50); // prekreslim ikonku pauzy aby bola lepsie viditelna
-    context.fillStyle = "black";
-    context.font = "Bold 30px Charcoal";
-    context.fillText("SKORE: " + game.skore, canvas.width/2.375, 40); // prekreslim skore aby ho bolo jasne vidiet aj pocas pauzy
-    context.fillStyle = "white";
-    context.font = "13.7px Charcoal";
-    context.fillText(napovedy[nahodnaNapoveda], 560, 320);
-    context.restore();
 }

@@ -9,19 +9,19 @@ class Game extends Widget {
       this.canvas = canvas
       this.context = context
 
-      this.gameLoop;               // gameloop interval
-      this.skore = 0;             // skore hráča
-      this.mute = false;          // vypnutie / zapnutie audia 
-      this.pocetZivotov = 3;     // pocet zivotov hraca
-      this.pocetProjektilov = 0; // pocet projektilov vystrelenych z lode
-      this.pocetAsteroidov = 0;
-
-      this.pause = false;      // kontrolovanie pauzy v hre
-      
-      this.level = 1;             // aktualny level
-      this.zvolenaObtiaznost = 2; // 1 - lahka, 2 stredna, 3 tazka
-
+      this.gameLoop;                     // gameloop interval
+      this.skore = 0;                    // skore hráča
+      this.mute = false;                 // vypnutie / zapnutie audia 
+      this.pocetZivotov = undefined;     // pocet zivotov hraca
+      this.pocetProjektilov = 0;         // pocet projektilov vystrelenych z lode
+      this.pocetAsteroidov = 0;          // aktualny pocet asteroidov v hre
+      this.pause = false;                // kontrolovanie pauzy v hre
+      this.level = 1;                    // aktualny level
+      this.zvolenaObtiaznost = 2;        // 1 - lahka, 2 stredna, 3 tazka
       this.leaderBoardSkore = []; // ulozene usporiadane leaderboard skore
+      this.dalsiLevel = false;
+      this.dalsiLevelCas = undefined;
+      this.celkovaDlzkaHry = 0;
     }
 
     // funkcia na prehravanie game audia
@@ -38,8 +38,16 @@ class Game extends Widget {
   
     // Redraw everything
     update() {
-      if(!this.pause){ // ak hra nie je zapauzovana tak hra vykresluje vsetky objekty, vykonava pohyb atd..
+      if(!this.pause && !this.dalsiLevel){ // ak hra nie je zapauzovana a ani sa nemeni level tak hra vykresluje vsetky objekty, vykonava pohyb atd..
         this.animaciaHry(this.context);
+      }
+
+      if(this.dalsiLevel){                // ak sa nacitava novy level tak 2s je obrazovka s NEXT LEVEL
+        var aktualnyCas = new Date(), casDoDalsiehoLevelu = aktualnyCas - this.dalsiLevelCas;
+        if(casDoDalsiehoLevelu/1000 >= 3.5){
+            vytvorAsteroidy(this.level, this.zvolenaObtiaznost);
+            this.dalsiLevel = false;
+        }
       }
     }
   

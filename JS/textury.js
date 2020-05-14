@@ -1,14 +1,12 @@
   // POZADIA
   var pozadie = new Image();
-  pozadie.src = './GRAFIKA/POZADIE.jpg';  // Pozadie
+  pozadie.src = './GRAFIKA/OBRAZOVKY/POZADIE.jpg';  // Pozadie
   var pozadieMainMenu = new Image();
-  pozadieMainMenu.src = './GRAFIKA/POZADIE-MAINMENU.jpg';  // Pozadie
+  pozadieMainMenu.src = './GRAFIKA/OBRAZOVKY/POZADIE-MAINMENU.jpg';  // Pozadie
   var instrukciePozadie = new Image();
-  instrukciePozadie.src = './GRAFIKA/INSTRUKCIE.jpg';
-
-  var vymazat = new Image(); // docasne pre leaderboard
-  vymazat.src = './GRAFIKA/vymazat.jpg';
-
+  instrukciePozadie.src = './GRAFIKA/OBRAZOVKY/INSTRUKCIE.jpg';
+  var zapauzovanaHra = new Image();
+  zapauzovanaHra.src = './GRAFIKA/OBRAZOVKY/ZAPAUZOVANA.png';
   // IKONKY
   var back = new Image();
   back.src = './GRAFIKA/IKONKY/back.png';
@@ -27,9 +25,6 @@
   pause.src = './GRAFIKA/IKONKY/PAUSE.png';
   var UNpause = new Image();
   UNpause.src = './GRAFIKA/IKONKY/UNPAUSE.png';
-
-  var zapauzovanaHra = new Image();
-  zapauzovanaHra.src = './GRAFIKA/zapauzovana_hra.png';
 
   var zivoty = new Image();
   zivoty.src = './GRAFIKA/IKONKY/ZIVOTY.png';

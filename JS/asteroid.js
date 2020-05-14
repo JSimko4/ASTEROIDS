@@ -49,7 +49,7 @@ class Asteroid extends HernyObjekt{
       // NEXT LEVEL
       if(game.pocetAsteroidov == 0){
         game.level++; // dalsi level
-        nextLevel(game.level, game.zvolenaObtiaznost); // vytvorim dalsi level
+        nextLevelScreen(game.level); // vytvorim dalsi level
       }
     }
   }

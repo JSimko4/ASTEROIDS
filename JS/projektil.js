@@ -26,14 +26,16 @@ class Projektil extends HernyObjekt{
         }
     } 
 
-    ondraw(context){
-        this.kolizia(context); // vykonam koliziu
-        this.pohyb(context); // vykonam pohyb objektov
-    
+    ondraw(context){    
+        context.save();
         context.fillStyle="salmon";
         context.beginPath();
         context.arc(this.x, this.y, this.sirka/2, 0, Math.PI * 2, false);
         context.fill();
+        context.restore();
+
+        this.kolizia(context); // vykonam koliziu
+        this.pohyb(context);  // vykonam pohyb projektilov
     }
 
     onkoliziaObjekty(context){   
@@ -42,13 +44,17 @@ class Projektil extends HernyObjekt{
             asteroid = game.nodes[i];
             if(asteroid instanceof Asteroid){ // testujem ci sa jedna fakt o asteroid (v game nodes mam aj hraca, buttony a dalsie projektily)
             if(vzdialenostBodov(this.x, this.y, asteroid.x+asteroid.sirka/2, asteroid.y+asteroid.sirka/2) < this.sirka/2.75 + asteroid.sirka/2.15){
-                if(asteroid.HP == 0) // skontrolujem ci sa nejedna o modry asteroid ktory ma viac zivota
-                     asteroid.znicenieADuplikacia(asteroid); // znicim asteroid, ktory sa rozdvoji na dalsie mini asteroidy
-                else    
-                    asteroid.HP--;
+                game.remove(this);                           // znicim projektil
+                game.pocetProjektilov--;                     // znizim pocet projektilov na hernej ploche
 
-                game.remove(this);                      // znicim projektil
-                game.pocetProjektilov--;                // znizim pocet projektilov na hernej ploche
+                if(asteroid.HP == 0)                         // skontrolujem ci sa nejedna o modry asteroid ktory ma viac zivota
+                     asteroid.znicenieADuplikacia(asteroid); // znicim asteroid, ktory sa rozdvoji na dalsie mini asteroidy
+                else{    
+                    asteroid.sirka -= 7; // zmensim trochu jeho velkost
+                    asteroid.vyska -= 7;
+                    asteroid.HP--;
+                }
+
                 break;
                 }
             }
