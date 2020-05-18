@@ -7,6 +7,7 @@
   instrukciePozadie.src = './GRAFIKA/OBRAZOVKY/INSTRUKCIE.jpg';
   var zapauzovanaHra = new Image();
   zapauzovanaHra.src = './GRAFIKA/OBRAZOVKY/ZAPAUZOVANA.png';
+  
   // IKONKY
   var back = new Image();
   back.src = './GRAFIKA/IKONKY/back.png';
@@ -20,16 +21,13 @@
   musicON.src = './GRAFIKA/IKONKY/MUSIC_ON.png';
   var musicOFF = new Image();
   musicOFF.src = './GRAFIKA/IKONKY/MUSIC_OFF.png';
-
   var pause = new Image();
   pause.src = './GRAFIKA/IKONKY/PAUSE.png';
   var UNpause = new Image();
   UNpause.src = './GRAFIKA/IKONKY/UNPAUSE.png';
-
   var zivoty = new Image();
   zivoty.src = './GRAFIKA/IKONKY/ZIVOTY.png';
 
-                 // HERNE OBJEKTY
   // TEXTURY HRACA - v pohybe / v neutralnej pozicii
   var lodN = new Image();       // Lod v neutralnej polohe
   var lodP = new Image();       // Lod v pohybe

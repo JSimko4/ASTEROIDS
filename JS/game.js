@@ -1,4 +1,4 @@
-// Simple application abstraction
+// GAME REPREZENTUJE CELU HRU
 class Game extends Widget {
     constructor(element) {
       var canvas = window.document.getElementById(element)
@@ -31,12 +31,12 @@ class Game extends Widget {
         gameAudio[index].cloneNode(true).play(); // fix na to aby som mohol mat aj viac vybuchov asteroidov naraz
     }
   
-    // Redefine draw
+    // Vykreslovanie aktualneho pozadia
     ondraw(context) {
         context.drawImage(pozadieMainMenu, 0, 0, canvas.width, canvas.height);
     }
   
-    // Redraw everything
+    // Celkova animacia hry
     update() {
       if(!this.pause && !this.dalsiLevel){ // ak hra nie je zapauzovana a ani sa nemeni level tak hra vykresluje vsetky objekty, vykonava pohyb atd..
         this.animaciaHry(this.context);
